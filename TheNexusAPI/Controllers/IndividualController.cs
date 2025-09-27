@@ -16,7 +16,7 @@ namespace TheNexusAPI.Controllers
 
         public IndividualController(DataContext dataContext) { 
             _dataContext = dataContext;
-            _individualService = new IndividualService(dataContext);
+            _individualService = new IndividualService(_dataContext);
 
             ////////////////////////
             // Default data to be removed once databases are implemented
@@ -67,9 +67,9 @@ namespace TheNexusAPI.Controllers
 
         // Add the given individual if they do not already exist
         [HttpPost]
-        public List<Individual> AddIndividual(Individual individual)
+        public Individual AddIndividual(Individual individual)
         {
-            return _individualService.AddIndividual(individual, individuals);
+            return _individualService.AddIndividual(individual);
         }
         
         #endregion
