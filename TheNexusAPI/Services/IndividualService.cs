@@ -1,11 +1,13 @@
-﻿using TheNexusAPI.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using TheNexusAPI.Data;
 using TheNexusAPI.Entities;
 
 namespace TheNexusAPI.Services
 {
     public class IndividualService
     {
-        DataContext _dataContext;
+        private readonly DataContext _dataContext;
+        private readonly IndividualService _individualService;
 
         public IndividualService(DataContext dataContext)
         {
@@ -15,6 +17,11 @@ namespace TheNexusAPI.Services
         public Individual? GetIndividualByIndividualId(int individualId, List<Individual> individual)
         {
             return individual.FirstOrDefault(item => item.IndividualId == individualId);// ?? new Individual();
+        }
+
+        public Individual? GetIndividualByIndividualId(int individualId)
+        {
+            return _dataContext.Individual.FirstOrDefault(item => item.IndividualId == individualId);// ?? new Individual();
         }
 
         public List<Individual> UpdateIndividual(Individual updatedIndividual, List<Individual> individuals)
@@ -30,21 +37,26 @@ namespace TheNexusAPI.Services
                 foundIndividual.StatusId = updatedIndividual.StatusId;
                 foundIndividual.PhoneNumberId = updatedIndividual.StatusId;
                 foundIndividual.SexId = updatedIndividual.SexId;
-                foundIndividual.Description = updatedIndividual.Description;
+                foundIndividual.IndividualDescription = updatedIndividual.IndividualDescription;
                 foundIndividual.IndividualTypeId = updatedIndividual.IndividualTypeId;
             }
 
             return individuals;
         }
 
-        public List<Individual> AddIndividual(Individual newIndividual, List<Individual> individuals)
+        public Individual AddIndividual(Individual newIndividual)//, List<Individual> individuals)
         {
-            Individual foundIndividual = GetIndividualByIndividualId(newIndividual.IndividualId, individuals);
-            if (foundIndividual.IndividualId == 0 && newIndividual.IndividualId != 0)
+
+            Individual foundIndividual = GetIndividualByIndividualId(newIndividual.IndividualId) ?? new Individual();
+            if (foundIndividual.IndividualId == 0)
             {
-                individuals.Add(newIndividual);
+                _dataContext.Individual.Add(newIndividual);
+                _dataContext.SaveChanges();
+
+                return newIndividual;
             }
-            return individuals;
+
+            return new Individual();
         }
     }   
 }
