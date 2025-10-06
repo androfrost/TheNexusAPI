@@ -20,9 +20,9 @@ namespace TheNexusAPI.Controllers
 
             ////////////////////////
             // Default data to be removed once databases are implemented
-            individuals.Add(new Individual { IndividualId = 1, FirstName = "Larry", LastName = "Wade", FamilyId = 1 });
+            individuals.Add(new Individual { IndividualId = 1, FirstName = "Test", LastName = "Testington", FamilyId = 1 });
             individuals.Add(new Individual { IndividualId = 2, FirstName = "Walt", LastName = "Disney", FamilyId = 2 });
-            individuals.Add(new Individual { IndividualId = 3, FirstName = "Jonetta", LastName = "Wade", FamilyId = 1 });
+            individuals.Add(new Individual { IndividualId = 3, FirstName = "Testa", LastName = "Testington", FamilyId = 1 });
             individuals.Add(new Individual { IndividualId = 4, FirstName = "Mickey", LastName = "Mouse", FamilyId = 2 });
             ////////////////////////
         }
@@ -33,8 +33,9 @@ namespace TheNexusAPI.Controllers
         [HttpGet]
         public List<Individual> GetIndividuals()
         {
-            return individuals;
+            return _dataContext.Individual.ToList();
         }
+
 
         // Get one specific Individual based on the primary key IndividualId
         [HttpGet("{individualId}")]
@@ -49,7 +50,14 @@ namespace TheNexusAPI.Controllers
         {
             return individuals.FindAll(item => item.FamilyId == familyId);  // ?? new List<Individual>();
         }
-        
+
+        // Get all Individuals with a specific status
+        [HttpGet("status/{statusId}")]
+        public List<Individual> GetIndividualsByStatusId(int statusId)
+        {
+            return _individualService.GetIndividualByStatusId(statusId) ?? new List<Individual>();
+        }
+
         #endregion
 
         #region Update
