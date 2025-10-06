@@ -24,6 +24,11 @@ namespace TheNexusAPI.Services
             return _dataContext.Individual.FirstOrDefault(item => item.IndividualId == individualId);// ?? new Individual();
         }
 
+        public List<Individual>? GetIndividualByStatusId(int statusId)
+        {
+            return _dataContext.Individual.Where(item => item.StatusId == statusId).ToList();// ?? new Individual();
+        }
+
         public List<Individual> UpdateIndividual(Individual updatedIndividual, List<Individual> individuals)
         {
             Individual? foundIndividual = GetIndividualByIndividualId(updatedIndividual.IndividualId, individuals);
