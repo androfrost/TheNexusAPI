@@ -23,9 +23,9 @@ namespace TheNexusAPI.Services
             return _dataContext.Family.FirstOrDefault(item => item.FamilyId == familyId);// ?? new Family();
         }
 
-        public List<Family> UpdateFamily(Family updatedFamily, List<Family> families)
+        public List<Family> UpdateFamily(Family updatedFamily)
         {
-            Family? foundFamily = GetFamilyByFamilyId(updatedFamily.FamilyId, families);
+            Family? foundFamily = GetFamilyByFamilyId(updatedFamily.FamilyId);
             if (foundFamily != null)
             {
                 foundFamily.FamilyId = updatedFamily.FamilyId;
@@ -34,7 +34,9 @@ namespace TheNexusAPI.Services
 
             }
 
-            return families;
+            _dataContext.Family.Update(foundFamily ?? new Family());
+            _dataContext.SaveChanges();
+            return _dataContext.Family.ToList();
         }
 
         public Family AddFamily(Family newFamily)//, List<Family> families)

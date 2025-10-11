@@ -32,14 +32,14 @@ namespace TheNexusAPI.Controllers
         [HttpGet]
         public List<Family> GetFamilies()
         {
-            return families;
+            return _dataContext.Family.ToList();
         }
 
         // Get one specific Family based on the primary key FamilyId
         [HttpGet("{familyId}")]
         public Family? GetFamilyByFamilyId(int familyId)
         {
-            return _familyService.GetFamilyByFamilyId(familyId, families);
+            return _familyService.GetFamilyByFamilyId(familyId);
         }
 
         // Get all Families who are within one family by the FamilyId
@@ -57,7 +57,7 @@ namespace TheNexusAPI.Controllers
         [HttpPut]
         public List<Family> UpdateFamily(Family family)
         {
-            return _familyService.UpdateFamily(family, families);
+            return _familyService.UpdateFamily(family);
         }
 
         #endregion

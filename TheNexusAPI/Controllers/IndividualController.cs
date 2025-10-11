@@ -66,7 +66,7 @@ namespace TheNexusAPI.Controllers
         [HttpPut]
         public List<Individual> UpdateIndividual(Individual individual)
         {
-            return _individualService.UpdateIndividual(individual, individuals);
+            return _individualService.UpdateIndividual(individual);
         }
 
         #endregion
