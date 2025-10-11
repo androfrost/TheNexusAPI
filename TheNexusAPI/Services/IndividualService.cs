@@ -29,9 +29,9 @@ namespace TheNexusAPI.Services
             return _dataContext.Individual.Where(item => item.StatusId == statusId).ToList();// ?? new Individual();
         }
 
-        public List<Individual> UpdateIndividual(Individual updatedIndividual, List<Individual> individuals)
+        public List<Individual> UpdateIndividual(Individual updatedIndividual)
         {
-            Individual? foundIndividual = GetIndividualByIndividualId(updatedIndividual.IndividualId, individuals);
+            Individual? foundIndividual = GetIndividualByIndividualId(updatedIndividual.IndividualId);
             if (foundIndividual != null)
             {
                 foundIndividual.FamilyId = updatedIndividual.FamilyId;
@@ -46,7 +46,9 @@ namespace TheNexusAPI.Services
                 foundIndividual.IndividualTypeId = updatedIndividual.IndividualTypeId;
             }
 
-            return individuals;
+            _dataContext.Individual.Update(foundIndividual ?? new Individual());
+            _dataContext.SaveChanges();
+            return _dataContext.Individual.ToList();
         }
 
         public Individual AddIndividual(Individual newIndividual)//, List<Individual> individuals)
