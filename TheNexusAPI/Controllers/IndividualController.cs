@@ -12,19 +12,9 @@ namespace TheNexusAPI.Controllers
         private readonly DataContext _dataContext;
         private readonly IndividualService _individualService;
 
-        private List<Individual> individuals = new List<Individual>() { };
-
         public IndividualController(DataContext dataContext) { 
             _dataContext = dataContext;
             _individualService = new IndividualService(_dataContext);
-
-            ////////////////////////
-            // Default data to be removed once databases are implemented
-            individuals.Add(new Individual { IndividualId = 1, FirstName = "Test", LastName = "Testington", FamilyId = 1 });
-            individuals.Add(new Individual { IndividualId = 2, FirstName = "Walt", LastName = "Disney", FamilyId = 2 });
-            individuals.Add(new Individual { IndividualId = 3, FirstName = "Testa", LastName = "Testington", FamilyId = 1 });
-            individuals.Add(new Individual { IndividualId = 4, FirstName = "Mickey", LastName = "Mouse", FamilyId = 2 });
-            ////////////////////////
         }
 
         #region Get
@@ -41,14 +31,14 @@ namespace TheNexusAPI.Controllers
         [HttpGet("{individualId}")]
         public Individual? GetIndividualByIndividualId(int individualId)
         {
-            return _individualService.GetIndividualByIndividualId(individualId, individuals);
+            return _individualService.GetIndividualByIndividualId(individualId);
         }
 
         // Get all Individuals who are within one family by the FamilyId
         [HttpGet("family/{familyId}")]
         public List<Individual> GetIndividualsByFamilyId(int familyId)
         {
-            return individuals.FindAll(item => item.FamilyId == familyId);  // ?? new List<Individual>();
+            return _dataContext.Individual.Where(item => item.FamilyId == familyId).ToList();  // ?? new List<Individual>();
         }
 
         // Get all Individuals with a specific status
