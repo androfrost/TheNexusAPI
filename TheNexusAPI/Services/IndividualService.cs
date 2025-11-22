@@ -8,10 +8,12 @@ namespace TheNexusAPI.Services
     {
         private readonly DataContext _dataContext;
         private readonly IndividualService _individualService;
+        private readonly ChangeLogService _changeLog;
 
         public IndividualService(DataContext dataContext)
         {
             _dataContext = dataContext;
+            _changeLog = new ChangeLogService(_dataContext);
         }
 
         public Individual? GetIndividualByIndividualId(int individualId, List<Individual> individual)
@@ -32,6 +34,21 @@ namespace TheNexusAPI.Services
         public List<Individual> UpdateIndividual(Individual updatedIndividual)
         {
             Individual? foundIndividual = GetIndividualByIndividualId(updatedIndividual.IndividualId);
+            // For holding foundIndividual initial value and during changelog check making sure what changed
+            Individual compareFoundIndividual = foundIndividual != null ? new Individual
+            {
+                IndividualId = foundIndividual.IndividualId,
+                FamilyId = foundIndividual.FamilyId,
+                FirstName = foundIndividual.FirstName,
+                LastName = foundIndividual.LastName,
+                LocationId = foundIndividual.LocationId,
+                DateOfBirth = foundIndividual.DateOfBirth,
+                StatusId = foundIndividual.StatusId,
+                PhoneNumberId = foundIndividual.PhoneNumberId,
+                SexId = foundIndividual.SexId,
+                IndividualDescription = foundIndividual.IndividualDescription,
+                IndividualTypeId = foundIndividual.IndividualTypeId
+            } : new Individual();
             if (foundIndividual != null)
             {
                 foundIndividual.FamilyId = updatedIndividual.FamilyId;
@@ -40,14 +57,23 @@ namespace TheNexusAPI.Services
                 foundIndividual.LocationId = updatedIndividual.LocationId;
                 foundIndividual.DateOfBirth = updatedIndividual.DateOfBirth;
                 foundIndividual.StatusId = updatedIndividual.StatusId;
-                foundIndividual.PhoneNumberId = updatedIndividual.StatusId;
+                foundIndividual.PhoneNumberId = updatedIndividual.PhoneNumberId;
                 foundIndividual.SexId = updatedIndividual.SexId;
                 foundIndividual.IndividualDescription = updatedIndividual.IndividualDescription;
                 foundIndividual.IndividualTypeId = updatedIndividual.IndividualTypeId;
             }
 
-            _dataContext.Individual.Update(foundIndividual ?? new Individual());
-            _dataContext.SaveChanges();
+            try { 
+                _dataContext.Individual.Update(foundIndividual ?? new Individual());
+                _dataContext.SaveChanges();
+                // If updates succeed, log changes
+                _changeLog.ConvertChangesForLogging(compareFoundIndividual, updatedIndividual);
+            }
+            catch(DbUpdateException ex)
+            {
+                // Handle exceptions related to database updates
+                Console.WriteLine($"An error occurred while updating the individual: {ex.Message}");
+            }
             return _dataContext.Individual.ToList();
         }
 
