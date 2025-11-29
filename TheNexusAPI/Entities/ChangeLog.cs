@@ -8,6 +8,7 @@ namespace TheNexusAPI.Entities
         public int ChangeLogId { get; set; }
         public string ChangedTable { get; set; } = string.Empty;
         public int ChangedTablePrimaryId { get; set; }
+        public string FieldAffected { get; set; } = string.Empty;
         public string OldValue { get; set; } = string.Empty;
         public string NewValue { get; set; } = string.Empty;
         public DateTime ChangeDateTime { get; set; }
