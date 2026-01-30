@@ -7,8 +7,11 @@ namespace TheNexusAPI.Data
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
         public DbSet<Individual> Individual => Set<Individual>();
+        public DbSet<IndividualType> IndividualType => Set<IndividualType>();
         public DbSet<Family> Family => Set<Family>();
         public DbSet<ChangeLog> ChangeLog => Set<ChangeLog>();
+        public DbSet<Location> Location => Set<Location>();
+        public DbSet<IndividualLocation> IndividualLocation => Set<IndividualLocation>();
 
     }
 }

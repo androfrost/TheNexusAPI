@@ -7,7 +7,6 @@ namespace TheNexusAPI.Services
     public class IndividualService
     {
         private readonly DataContext _dataContext;
-        private readonly IndividualService _individualService;
         private readonly ChangeLogService _changeLog;
 
         public IndividualService(DataContext dataContext)
