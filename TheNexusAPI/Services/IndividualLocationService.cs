@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TheNexusAPI.Data;
 using TheNexusAPI.Entities;
+using TheNexusAPI.Entities.Dto;
 
 namespace TheNexusAPI.Services
 {
@@ -57,12 +58,24 @@ namespace TheNexusAPI.Services
             return _dataContext.IndividualLocation.Where(il => il.IndividualId == individualId).ToList();
         }
 
+        // Gets the IndividualLocations by both individualId and locationId
+        public IndividualLocation GetIndividualLocationByIndividualAndLocationId(int individualId, int locationId)
+        {
+            return _dataContext.IndividualLocation.Where(il => il.IndividualId == individualId && il.LocationId == locationId).FirstOrDefault() ?? new IndividualLocation();
+        }
+
+        //Adds an IndividualLocation to link an Individual to a Location
         public IndividualLocation AddIndividualLocation(IndividualLocation newIndividualLocation)
         {
-            _dataContext.IndividualLocation.Add(newIndividualLocation);
-            _dataContext.SaveChanges();
-            
-            return newIndividualLocation;
+            IndividualLocation foundIndividualLocation = GetIndividualLocationByIndividualAndLocationId(newIndividualLocation.IndividualId, newIndividualLocation.LocationId);
+            if (foundIndividualLocation != null)
+            {
+                _dataContext.IndividualLocation.Add(newIndividualLocation);
+                _dataContext.SaveChanges();
+                return newIndividualLocation;
+            }
+
+            return new IndividualLocation();
         }
     }
 }

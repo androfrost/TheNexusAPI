@@ -40,7 +40,14 @@ namespace TheNexusAPI.Controllers
         {
             return _locationService.GetLocationsByIndividualId(individualId);
         }
-            
+        
+        //Gets IndividualLocations and the Assigned Flag into a Dto so they can be displayed if the chosen individual is assigned
+        [HttpGet("GetIndividualsLocationWithAssignedIndividual/{individualId}")]
+        public List<LocationsWithAssignedIndividualDto> GetIndividualsLocationWithAssignedIndividual(int individualId)
+        {
+            return _locationService.GetIndividualsLocationWithAssignedIndividual(individualId);
+        }
+
         #endregion
 
         #region Update
@@ -64,7 +71,7 @@ namespace TheNexusAPI.Controllers
         }
 
         [HttpPost("IndividualLocation")]
-        public IndividualLocationDto AddIndividualToALocation(IndividualLocationDto individualLocationDto)
+        public IndividualLocationsDto AddIndividualToALocation(IndividualLocationsDto individualLocationDto)
         {
             return _locationService.AddIndividualToALocation(individualLocationDto);
         }
