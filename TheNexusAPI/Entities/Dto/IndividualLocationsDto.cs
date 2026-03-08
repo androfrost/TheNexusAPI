@@ -2,12 +2,12 @@
 
 namespace TheNexusAPI.Entities.Dto
 {
-    public class IndividualLocationDto
+    public class IndividualLocationsDto
     {
         [Key]
         public int IndividualLocationId { get; set; }
         public int IndividualId { get; set; }
         public int LocationId { get; set; }
-        public Location[] Location { get; set; } = [];
+        public List<Location> Location { get; set; } = [];
     }
 }

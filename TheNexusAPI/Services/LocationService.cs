@@ -87,8 +87,24 @@ namespace TheNexusAPI.Services
                 Zip = location.Zip
             }).ToList();
 
-
             return locations;
+        }
+
+        public List<LocationsWithAssignedIndividualDto> GetIndividualsLocationWithAssignedIndividual(int individualId)
+        {
+            List<Location> allLocations = GetLocations();
+            List<LocationsWithAssignedIndividualDto> locationsWithAssignedIndividualDtos = allLocations.Select(location => new LocationsWithAssignedIndividualDto
+            {
+                LocationId = location.LocationId,
+                LocationName = location.LocationName,
+                Address = location.Address,
+                City = location.City,
+                State = location.State,
+                Zip = location.Zip,
+                IsAssigned = _individualLocationService.GetIndividualLocationByIndividualAndLocationId(individualId, location.LocationId).IndividualLocationId > 0 ? true : false
+            }).ToList();
+
+            return locationsWithAssignedIndividualDtos;
         }
 
         public Location AddLocation(Location newLocation)
@@ -113,34 +129,29 @@ namespace TheNexusAPI.Services
             return new Location();
         }
 
-        public IndividualLocationDto AddIndividualToALocation(IndividualLocationDto individualLocationDto)
+        public IndividualLocationsDto AddIndividualToALocation(IndividualLocationsDto individualLocationsDto)
         {
-            Location[] location = individualLocationDto.Location;
+            List<Location> location = individualLocationsDto.Location;
 
-            for (int loc = 0; loc < location.Length; loc++)
+            for (int loc = 0; loc < location.Count; loc++)
             {
-                //if (IsDuplicateLocation(location[loc]))
-                //{
-                //    Console.WriteLine("Location Already Exists!");
-                //    return new IndividualLocationDto();
-                //}
 
                 var addedLocation = AddLocation(location[loc]);
                 if (addedLocation.LocationId == 0)
                 {
                     Console.WriteLine("Location Already Exists!");
-                    return new IndividualLocationDto();
+                    return new IndividualLocationsDto();
                 }
-                _individualService.GetIndividualByIndividualId(individualLocationDto.IndividualId);
+                _individualService.GetIndividualByIndividualId(individualLocationsDto.IndividualId);
                 IndividualLocation individualLocation = new IndividualLocation
                 {
-                    IndividualId = individualLocationDto.IndividualId,
-                    LocationId = individualLocationDto.Location[loc].LocationId
+                    IndividualId = individualLocationsDto.IndividualId,
+                    LocationId = individualLocationsDto.Location[loc].LocationId
                 };
                 _individualLocationService.AddIndividualLocation(individualLocation);
             }
-            
-            return individualLocationDto;
+
+            return individualLocationsDto;
         }
 
         public bool IsDuplicateLocation(Location testLocation)

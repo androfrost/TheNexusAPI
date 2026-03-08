@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TheNexusAPI.Data;
 using TheNexusAPI.Entities;
+using TheNexusAPI.Entities.Dto;
 using TheNexusAPI.Services;
 
 namespace TheNexusAPI.Controllers
@@ -59,7 +60,7 @@ namespace TheNexusAPI.Controllers
         [HttpGet("individualAndLocation")]
         public IndividualLocation GetIndividualLocationByIndividualAndLocationId(int individualId, int locationId)
         {
-            return _dataContext.IndividualLocation.Where(il => il.IndividualId == individualId && il.LocationId == locationId).FirstOrDefault() ?? new IndividualLocation();
+            return _individualLocationService.GetIndividualLocationByIndividualAndLocationId(individualId, locationId);
         }
 
         #endregion
@@ -88,7 +89,7 @@ namespace TheNexusAPI.Controllers
 
         #region Delete
 
-        //Delete the given individualLocation if found
+        // Delete the given individualLocation if found
         [HttpDelete]
         public void DeleteIndividualLocation(int individualLocationId)
         {
@@ -96,11 +97,19 @@ namespace TheNexusAPI.Controllers
             _dataContext.SaveChanges();
         }
 
-        [HttpDelete("Delete")]
+        // Deletes a location based on both the individualId and the locationId 
+        [HttpDelete("IndividualLocationDelete/{individualId}/{locationId}")]
         public void DeleteIndividualLocationByIndividualAndLocationId(int individualId, int locationId)
         {
-            _dataContext.IndividualLocation.Remove(GetIndividualLocationByIndividualAndLocationId(individualId, locationId));
-            _dataContext.SaveChanges();
+            try
+            {
+                _dataContext.IndividualLocation.Remove(GetIndividualLocationByIndividualAndLocationId(individualId, locationId));
+                _dataContext.SaveChanges();
+            }
+            catch (Exception DbUpdateConcurrencyException)
+            {
+                Console.WriteLine("Cannot delete record, record not found");
+            }
         }
 
         #endregion

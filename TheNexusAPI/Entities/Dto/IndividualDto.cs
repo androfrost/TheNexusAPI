@@ -10,7 +10,6 @@ namespace TheNexusAPI.Entities
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public int FamilyId { get; set; } = 0;
-        public IndividualLocationDto individualLocationDto { get; set; } = new IndividualLocationDto();
         public int PhoneNumberId { get; set; } = 0;
         public string IndividualDescription { get; set; } = string.Empty;
         public int IndividualTypeId { get; set; } = 0;
