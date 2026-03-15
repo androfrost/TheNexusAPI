@@ -12,6 +12,7 @@ namespace TheNexusAPI.Services
         private readonly ChangeLogService _changeLog;
         private readonly IndividualService _individualService;
         private readonly IndividualLocationService _individualLocationService;
+        private readonly ErrorLogService _errorLogService;
 
         public LocationService(DataContext dataContext)
         {
@@ -19,6 +20,7 @@ namespace TheNexusAPI.Services
             _changeLog = new ChangeLogService(_dataContext);
             _individualLocationService = new IndividualLocationService(_dataContext);
             _individualService = new IndividualService(_dataContext);
+            _errorLogService = new ErrorLogService(_dataContext);
         }
 
         public List<Location> UpdateLocation(Location updatedLocation)
@@ -42,19 +44,19 @@ namespace TheNexusAPI.Services
                 foundLocation.City = updatedLocation.City;
                 foundLocation.State = updatedLocation.State;
                 foundLocation.Zip = updatedLocation.Zip;
-            }
 
-            try
-            {
-                _dataContext.Location.Update(foundLocation ?? new Location());
-                _dataContext.SaveChanges();
-                // If updates succeed, log changes
-                _changeLog.ConvertChangesForLogging(compareFoundLocation, updatedLocation);
-            }
-            catch (DbUpdateException ex)
-            {
-                // Handle exceptions related to database updates
-                Console.WriteLine($"An error occurred while updating the location: {ex.Message}");
+                try
+                {
+                    _dataContext.Location.Update(foundLocation ?? new Location());
+                    _dataContext.SaveChanges();
+                    // If updates succeed, log changes
+                    _changeLog.ConvertChangesForLogging(compareFoundLocation, updatedLocation);
+                }
+                catch (DbUpdateException ex)
+                {
+                    // Handle exceptions related to database updates
+                    _errorLogService.GenericAddToErrorLog(ex);
+                }
             }
             return _dataContext.Location.ToList();
         }
