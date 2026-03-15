@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TheNexusAPI.Data;
 using TheNexusAPI.Entities;
-using TheNexusAPI.Entities.Dto;
 using TheNexusAPI.Services;
 
 namespace TheNexusAPI.Controllers
@@ -12,12 +12,13 @@ namespace TheNexusAPI.Controllers
     {
         private readonly DataContext _dataContext;
         private readonly IndividualLocationService _individualLocationService;
+        private readonly ErrorLogService _errorLogService;
 
         public IndividualLocationController(DataContext dataContext)
         {
             _dataContext = dataContext;
             _individualLocationService = new IndividualLocationService(_dataContext);
-
+            _errorLogService = new ErrorLogService(_dataContext);
         }
 
         #region Get
@@ -106,9 +107,10 @@ namespace TheNexusAPI.Controllers
                 _dataContext.IndividualLocation.Remove(GetIndividualLocationByIndividualAndLocationId(individualId, locationId));
                 _dataContext.SaveChanges();
             }
-            catch (Exception DbUpdateConcurrencyException)
+            catch (DbUpdateException ex)
             {
-                Console.WriteLine("Cannot delete record, record not found");
+                // Handle exceptions related to database updates
+                _errorLogService.GenericAddToErrorLog(ex);
             }
         }
 

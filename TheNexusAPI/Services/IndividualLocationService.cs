@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TheNexusAPI.Data;
 using TheNexusAPI.Entities;
-using TheNexusAPI.Entities.Dto;
 
 namespace TheNexusAPI.Services
 {
@@ -9,11 +8,13 @@ namespace TheNexusAPI.Services
     {
         private readonly DataContext _dataContext;
         private readonly ChangeLogService _changeLog;
+        private readonly ErrorLogService _errorLogService;
 
         public IndividualLocationService(DataContext dataContext)
         {
             _dataContext = dataContext;
             _changeLog = new ChangeLogService(_dataContext);
+            _errorLogService = new ErrorLogService(_dataContext);
         }
 
         public List<IndividualLocation> UpdateIndividualLocation(IndividualLocation updatedIndividualLocation)
@@ -31,19 +32,19 @@ namespace TheNexusAPI.Services
                 foundIndividualLocation.IndividualLocationId = updatedIndividualLocation.IndividualLocationId;
                 foundIndividualLocation.IndividualId = updatedIndividualLocation.IndividualId;
                 foundIndividualLocation.LocationId = updatedIndividualLocation.LocationId;
-            }
 
-            try
-            {
-                _dataContext.IndividualLocation.Update(foundIndividualLocation ?? new IndividualLocation());
-                _dataContext.SaveChanges();
-                // If updates succeed, log changes
-                _changeLog.ConvertChangesForLogging(compareFoundLocation, updatedIndividualLocation);
-            }
-            catch (DbUpdateException ex)
-            {
-                // Handle exceptions related to database updates
-                Console.WriteLine($"An error occurred while updating the location: {ex.Message}");
+                try
+                {
+                    _dataContext.IndividualLocation.Update(foundIndividualLocation ?? new IndividualLocation());
+                    _dataContext.SaveChanges();
+                    // If updates succeed, log changes
+                    _changeLog.ConvertChangesForLogging(compareFoundLocation, updatedIndividualLocation);
+                }
+                catch (DbUpdateException ex)
+                {
+                    // Handle exceptions related to database updates
+                    _errorLogService.GenericAddToErrorLog(ex);
+                }
             }
             return _dataContext.IndividualLocation.ToList();
         }

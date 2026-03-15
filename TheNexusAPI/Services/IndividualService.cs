@@ -8,11 +8,13 @@ namespace TheNexusAPI.Services
     {
         private readonly DataContext _dataContext;
         private readonly ChangeLogService _changeLog;
+        private readonly ErrorLogService _errorLogService;
 
         public IndividualService(DataContext dataContext)
         {
             _dataContext = dataContext;
             _changeLog = new ChangeLogService(_dataContext);
+            _errorLogService = new ErrorLogService(_dataContext);
         }
 
         public Individual? GetIndividualByIndividualId(int individualId, List<Individual> individual)
@@ -60,18 +62,20 @@ namespace TheNexusAPI.Services
                 foundIndividual.SexId = updatedIndividual.SexId;
                 foundIndividual.IndividualDescription = updatedIndividual.IndividualDescription;
                 foundIndividual.IndividualTypeId = updatedIndividual.IndividualTypeId;
-            }
 
-            try { 
-                _dataContext.Individual.Update(foundIndividual ?? new Individual());
-                _dataContext.SaveChanges();
-                // If updates succeed, log changes
-                _changeLog.ConvertChangesForLogging(compareFoundIndividual, updatedIndividual);
-            }
-            catch(DbUpdateException ex)
-            {
-                // Handle exceptions related to database updates
-                Console.WriteLine($"An error occurred while updating the individual: {ex.Message}");
+
+                try
+                {
+                    _dataContext.Individual.Update(foundIndividual ?? new Individual());
+                    _dataContext.SaveChanges();
+                    // If updates succeed, log changes
+                    _changeLog.ConvertChangesForLogging(compareFoundIndividual, updatedIndividual);
+                }
+                catch (DbUpdateException ex)
+                {
+                    // Handle exceptions related to database updates
+                    _errorLogService.GenericAddToErrorLog(ex);
+                }
             }
             return _dataContext.Individual.ToList();
         }
