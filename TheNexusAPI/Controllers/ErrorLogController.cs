@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TheNexusAPI.Data;
 using TheNexusAPI.Entities;
 using TheNexusAPI.Services;
 
@@ -6,7 +7,14 @@ namespace TheNexusAPI.Controllers
 {
     public class ErrorLogController : ControllerBase
     {
+        private readonly DataContext _dataContext;
         private readonly ErrorLogService _errorLogService;
+
+        public ErrorLogController(DataContext dataContext)
+        {
+            _dataContext = dataContext;
+            _errorLogService = new ErrorLogService(_dataContext);
+        }
 
         #region Get
         // Get all ErrorLog entries

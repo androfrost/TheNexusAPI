@@ -11,6 +11,8 @@ namespace TheNexusAPI.Data
         public DbSet<Family> Family => Set<Family>();
         public DbSet<Location> Location => Set<Location>();
         public DbSet<IndividualLocation> IndividualLocation => Set<IndividualLocation>();
+        public DbSet<PhoneNumber> PhoneNumber => Set<PhoneNumber>();
+        public DbSet<IndividualPhoneNumber> IndividualPhoneNumber => Set<IndividualPhoneNumber>();
 
         public DbSet<ChangeLog> ChangeLog => Set<ChangeLog>();
         public DbSet<ErrorLog> ErrorLog => Set<ErrorLog>();
