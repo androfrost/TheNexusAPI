@@ -7,7 +7,14 @@ namespace TheNexusAPI.Controllers
 {
     public class ChangeLogController : ControllerBase
     {
+        private readonly DataContext _dataContext;
         private readonly ChangeLogService _changeLogService;
+
+        public ChangeLogController(DataContext dataContext)
+        {
+            _dataContext = dataContext;
+            _changeLogService = new ChangeLogService(_dataContext);
+        }
 
         #region Get
         // Get all ChangeLog entries
