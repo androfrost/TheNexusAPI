@@ -39,7 +39,7 @@ namespace TheNexusAPI.Services
             Individual compareFoundIndividual = foundIndividual != null ? new Individual
             {
                 IndividualId = foundIndividual.IndividualId,
-                FamilyId = foundIndividual.FamilyId,
+                GroupId = foundIndividual.GroupId,
                 FirstName = foundIndividual.FirstName,
                 LastName = foundIndividual.LastName,
                 LocationId = foundIndividual.LocationId,
@@ -52,7 +52,7 @@ namespace TheNexusAPI.Services
             } : new Individual();
             if (foundIndividual != null)
             {
-                foundIndividual.FamilyId = updatedIndividual.FamilyId;
+                foundIndividual.GroupId = updatedIndividual.GroupId;
                 foundIndividual.FirstName = updatedIndividual.FirstName;
                 foundIndividual.LastName = updatedIndividual.LastName;
                 foundIndividual.LocationId = updatedIndividual.LocationId;
