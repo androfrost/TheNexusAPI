@@ -8,7 +8,7 @@ namespace TheNexusAPI.Entities
         public int IndividualId { get; set; }
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
-        public int FamilyId { get; set; } = 0;
+        public int GroupId { get; set; } = 0;
         public int LocationId { get; set; } = 0;
         public int PhoneNumberId { get; set; } = 0;
         public string IndividualDescription { get; set; } = string.Empty;

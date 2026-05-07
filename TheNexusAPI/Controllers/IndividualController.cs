@@ -34,11 +34,11 @@ namespace TheNexusAPI.Controllers
             return _individualService.GetIndividualByIndividualId(individualId);
         }
 
-        // Get all Individuals who are within one family by the FamilyId
-        [HttpGet("family/{familyId}")]
-        public List<Individual> GetIndividualsByFamilyId(int familyId)
+        // Get all Individuals who are within one group by the GroupId
+        [HttpGet("group/{groupId}")]
+        public List<Individual> GetIndividualsByGroupId(int groupId)
         {
-            return _dataContext.Individual.Where(item => item.FamilyId == familyId).ToList();  // ?? new List<Individual>();
+            return _dataContext.Individual.Where(item => item.GroupId == groupId).ToList();  // ?? new List<Individual>();
         }
 
         // Get all Individuals with a specific status
