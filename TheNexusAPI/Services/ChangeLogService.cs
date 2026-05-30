@@ -30,7 +30,7 @@ namespace TheNexusAPI.Services
             return newChangeLog;
         }
 
-        public void GenericAddToChangeLog(string tableChanged, int tableChangedPrimaryId, string fieldAffected, string? originalValueString = "", string? newValueString = "")
+        public void GenericAddToChangeLog(string tableChanged, int tableChangedPrimaryId, string fieldAffected, string originalValueString = "", string newValueString = "", int changeUserId = 0, int changeTypeId = 1)
         {
             ChangeLog changeLog = new ChangeLog
             {
@@ -40,13 +40,14 @@ namespace TheNexusAPI.Services
                 OldValue = originalValueString,
                 NewValue = newValueString,
                 ChangeDateTime = DateTime.UtcNow,
-                ChangeUserId = 0
+                ChangeUserId = changeUserId,
+                ChangeTypeId = changeTypeId
             };
 
             AddChangeLog(changeLog);
         }
 
-        public ChangeLog ConvertChangesForLogging<T>(T? originalEntity, T? newEntity) where T : class
+        public ChangeLog ConvertChangesForLogging<T>(T? originalEntity, T? newEntity, int changeUserId = 0, int changeTypeId = 1) where T : class
         {
             var changeLog = new ChangeLog();
 
@@ -94,7 +95,7 @@ namespace TheNexusAPI.Services
                     // If there are changes, persist a change log entry using the primary key if found
                     if (!string.IsNullOrEmpty(changeLog.OldValue) && primaryKeyValue.HasValue)
                     {
-                        GenericAddToChangeLog(changeLog.ChangedTable, primaryKeyValue.Value, prop.Name, originalValue.ToString(), newValue.ToString());
+                        GenericAddToChangeLog(changeLog.ChangedTable, primaryKeyValue.Value, prop.Name, originalValue.ToString(), newValue.ToString(), changeUserId, changeTypeId);
                     }
                 }
             }

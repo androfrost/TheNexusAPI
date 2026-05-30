@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using TheNexusAPI.Data;
 using TheNexusAPI.Entities;
 using TheNexusAPI.Entities.Dto;
+using TheNexusAPI.Enums;
 
 namespace TheNexusAPI.Services
 {
@@ -44,7 +45,7 @@ namespace TheNexusAPI.Services
                     _dataContext.PhoneNumber.Update(foundPhoneNumber ?? new PhoneNumber());
                     _dataContext.SaveChanges();
                     // If updates succeed, log changes
-                    _changeLog.ConvertChangesForLogging(compareFoundPhoneNumber, updatedPhoneNumber);
+                    _changeLog.ConvertChangesForLogging(compareFoundPhoneNumber, updatedPhoneNumber, 0, (int)ChangeType.Update);
                 }
                 catch (DbUpdateException ex)
                 {
@@ -112,6 +113,8 @@ namespace TheNexusAPI.Services
             {
                 _dataContext.PhoneNumber.Add(newPhoneNumber);
                 _dataContext.SaveChanges();
+                // If add succeeds, log changes
+                _changeLog.ConvertChangesForLogging(new PhoneNumber(), newPhoneNumber, 0, (int)ChangeType.Create);
 
                 return newPhoneNumber;
             }

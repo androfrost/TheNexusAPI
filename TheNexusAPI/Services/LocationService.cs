@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using TheNexusAPI.Data;
 using TheNexusAPI.Entities;
 using TheNexusAPI.Entities.Dto;
+using TheNexusAPI.Enums;
 
 namespace TheNexusAPI.Services
 {
@@ -50,7 +51,7 @@ namespace TheNexusAPI.Services
                     _dataContext.Location.Update(foundLocation ?? new Location());
                     _dataContext.SaveChanges();
                     // If updates succeed, log changes
-                    _changeLog.ConvertChangesForLogging(compareFoundLocation, updatedLocation);
+                    _changeLog.ConvertChangesForLogging(compareFoundLocation, updatedLocation, 0, (int)ChangeType.Update);
                 }
                 catch (DbUpdateException ex)
                 {
@@ -124,6 +125,8 @@ namespace TheNexusAPI.Services
             {
                 _dataContext.Location.Add(newLocation);
                 _dataContext.SaveChanges();
+                // If add succeeds, log changes
+                _changeLog.ConvertChangesForLogging(new Location(), newLocation, 0, (int)ChangeType.Create);
 
                 return newLocation;
             }

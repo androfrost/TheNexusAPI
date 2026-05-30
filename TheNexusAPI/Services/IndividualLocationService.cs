@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TheNexusAPI.Data;
 using TheNexusAPI.Entities;
+using TheNexusAPI.Enums;
 
 namespace TheNexusAPI.Services
 {
@@ -38,7 +39,7 @@ namespace TheNexusAPI.Services
                     _dataContext.IndividualLocation.Update(foundIndividualLocation ?? new IndividualLocation());
                     _dataContext.SaveChanges();
                     // If updates succeed, log changes
-                    _changeLog.ConvertChangesForLogging(compareFoundLocation, updatedIndividualLocation);
+                    _changeLog.ConvertChangesForLogging(compareFoundLocation, updatedIndividualLocation, 0, (int)ChangeType.Update);
                 }
                 catch (DbUpdateException ex)
                 {
@@ -73,6 +74,9 @@ namespace TheNexusAPI.Services
             {
                 _dataContext.IndividualLocation.Add(newIndividualLocation);
                 _dataContext.SaveChanges();
+                // If add succeeds, log changes
+                _changeLog.ConvertChangesForLogging(new IndividualLocation(), newIndividualLocation, 0, (int)ChangeType.Create);
+
                 return newIndividualLocation;
             }
 
