@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TheNexusAPI.Data;
 using TheNexusAPI.Entities;
+using TheNexusAPI.Enums;
 
 namespace TheNexusAPI.Services
 {
@@ -69,7 +70,7 @@ namespace TheNexusAPI.Services
                     _dataContext.Individual.Update(foundIndividual ?? new Individual());
                     _dataContext.SaveChanges();
                     // If updates succeed, log changes
-                    _changeLog.ConvertChangesForLogging(compareFoundIndividual, updatedIndividual);
+                    _changeLog.ConvertChangesForLogging(compareFoundIndividual, updatedIndividual, 0, (int)ChangeType.Update);
                 }
                 catch (DbUpdateException ex)
                 {
@@ -88,6 +89,8 @@ namespace TheNexusAPI.Services
             {
                 _dataContext.Individual.Add(newIndividual);
                 _dataContext.SaveChanges();
+                // If add succeeds, log changes
+                _changeLog.ConvertChangesForLogging(new Individual(), newIndividual, 0, (int)ChangeType.Create);
 
                 return newIndividual;
             }

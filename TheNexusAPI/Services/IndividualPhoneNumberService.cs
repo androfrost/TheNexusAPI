@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TheNexusAPI.Data;
 using TheNexusAPI.Entities;
+using TheNexusAPI.Enums;
 
 namespace TheNexusAPI.Services
 {
@@ -38,7 +39,7 @@ namespace TheNexusAPI.Services
                     _dataContext.IndividualPhoneNumber.Update(foundIndividualPhoneNumber ?? new IndividualPhoneNumber());
                     _dataContext.SaveChanges();
                     // If updates succeed, log changes
-                    _changeLog.ConvertChangesForLogging(compareFoundPhoneNumber, updatedIndividualPhoneNumber);
+                    _changeLog.ConvertChangesForLogging(compareFoundPhoneNumber, updatedIndividualPhoneNumber, 0, (int)ChangeType.Update);
                 }
                 catch (DbUpdateException ex)
                 {
@@ -73,6 +74,9 @@ namespace TheNexusAPI.Services
             {
                 _dataContext.IndividualPhoneNumber.Add(newIndividualPhoneNumber);
                 _dataContext.SaveChanges();
+                // If add succeeds, log changes
+                _changeLog.ConvertChangesForLogging(new IndividualPhoneNumber(), newIndividualPhoneNumber, 0, (int)ChangeType.Create);
+
                 return newIndividualPhoneNumber;
             }
 

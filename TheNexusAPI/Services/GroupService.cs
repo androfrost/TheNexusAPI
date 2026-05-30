@@ -3,6 +3,7 @@ using System.Data;
 using System.Reflection;
 using TheNexusAPI.Data;
 using TheNexusAPI.Entities;
+using TheNexusAPI.Enums;
 
 namespace TheNexusAPI.Services
 {
@@ -53,7 +54,7 @@ namespace TheNexusAPI.Services
                 _dataContext.Group.Update(foundGroup ?? new Group());
                 _dataContext.SaveChanges();
                 // If updates succeed, log changes
-                _changeLog.ConvertChangesForLogging(compareFoundGroup, updatedGroup);
+                _changeLog.ConvertChangesForLogging(compareFoundGroup, updatedGroup, 0, (int)ChangeType.Update);
             }
             catch(DbUpdateException ex)
             {
@@ -72,6 +73,8 @@ namespace TheNexusAPI.Services
             {
                 _dataContext.Group.Add(newGroup);
                 _dataContext.SaveChanges();
+                // If add succeeds, log changes
+                _changeLog.ConvertChangesForLogging(new Group(), newGroup, 0, (int)ChangeType.Create);
 
                 return newGroup;
             }

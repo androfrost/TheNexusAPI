@@ -13,6 +13,7 @@ namespace TheNexusAPI.Entities
         public string NewValue { get; set; } = string.Empty;
         public DateTime ChangeDateTime { get; set; }
         public int ChangeUserId { get; set; }
+        public int ChangeTypeId { get; set; }
 
     }
 }
